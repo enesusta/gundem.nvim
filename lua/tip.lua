@@ -30,9 +30,12 @@ M.setup = function(params)
 
       local currencies = {}
 
-      for i, p in pairs(handler.root.Tarih_Date.Currency) do
+      for _, p in pairs(handler.root.Tarih_Date.Currency) do
         local code = p._attr.CurrencyCode
-        currencies[code] = { p.ForexBuying, code }
+        local obj = {}
+        obj['buy'] = p.ForexBuying
+        obj['code'] = code
+        currencies[code] = obj
       end
 
       local async = require 'plenary.async'
@@ -47,8 +50,8 @@ M.setup = function(params)
 
       for _ = 1, 2 do
         local value = receiver.recv()
-        local buy = value[0]
-        local code = value[1]
+        local buy = value.buy
+        local code = value.code
         pcall(vim.notify, buy, M.config.seconds, { title = code })
       end
     end,
